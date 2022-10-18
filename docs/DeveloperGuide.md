@@ -156,6 +156,66 @@ Classes used by multiple components are in the `seedu.addressbook.commons` packa
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Edit Supplier feature
+
+#### Implementation
+
+The functionality to edit a supplier's details is contained within the `EditCommand` class, which extends the abstract `Command` class by operating on a given `Model` in the following summarised way:
+
+A `Person` in the given `Model` is selected using an index number, following which a new `Person` object with user-specified details is created. 
+Finally, the old `Person` is replaced with the new `Person` after validity checks have succeeded.
+
+To achieve the aforementioned, the `EditCommand` class encapsulates the nested class `EditPersonDescriptor`, which serves to hold the user's input details that will subsequently be used to update the chosen `Person`. 
+`EditPersonDescriptor` implements:
+
+- `isAnyFieldEdited()` — Checks if any of the fields to be updated is non-empty.
+- Getters and setters to access and modify the corresponding fields of the given `EditPersonDescriptor` object.
+
+```
+SHOW CLASS DIAGRAM HERE (RSHIP OF ALL THESE CLASSES)
+```
+
+The respective `Parser` subclass, in this case `EditCommandParser`, is called by a chain of method calls starting when the program is launched.
+
+```
+SHOW SEQUENCE DIAGRAM HERE (CHAIN OF METHOD CALLS)
+```
+
+The arguments provided to this function call, which specify the details to edit the target `Person` with, are each prefixed by various prefixes (such as `n/` for Name, `i/` for Item) 
+to allow the `ArgumentTokenizer` and `ArgumentMultimap` to recognise and split the provided arguments into the correct categories for easier parsing and updating.
+
+Given below is an example usage scenario and how the edit supplier command behaves at each step.
+
+Step 1. The user launches the application. The `ReadOnlyAddressBook` that holds supplier data in the application is initialised with supplier data stored on the `AddressBookStorage` saved on disk, otherwise it is populated with sample supplier data from `SampleDataUtil`.
+
+```
+SHOW ACTIVITY DIAGRAM HERE (CHOOSING WHERE TO GET SUPPLIER DATA)
+```
+
+Step 2. The user executes `edit 2 n/New Supplier Name p/61234567 i/Cookies` to edit the 2nd person in the supplier list to have the new name of "New Supplier Name", the new phone number of "61234567" and the new item supplied of "Cookies".
+Then, multiple processes occur to parse, validate and execute the command.
+- `EditCommandParser` parses this command in multiple steps. First, `ArgumentTokenizer#tokenize()` creates an `ArgumentMultimap` from the given arguments and respective prefixes. This allows the `Index` of the chosen supplier, and the input details for each field to be extracted.
+If the provided `Index` is invalid, a `ParseException` is thrown. Otherwise, for each existing valid prefix in the `ArgumentMultimap`, an `EditPersonDescriptor` is built with the input values corresponding to the prefixes.
+The existing prefixes are `n/`, `p/` and `i/`, and values are "New Supplier Name", "61234567" and "Cookies" respectively. A new `EditCommand` is constructed with the given `Index` and `EditPersonDescriptor`.
+- At this point, there are multiple checks for validity of the `Index` and `EditPersonDescriptor` arguments. Notably, the edited `Person`, who is to replace the old `Person`, has to be unique from the other existing `Person`s within the address book.
+`Model#hasPersonExcluding(Person person, Person excludedPerson)` facilitates this by first excluding the `Person` to be edited from the duplicate checks, then calling `Person#isSamePerson(Person otherPerson)` to compare the edited `Person` with all other `Person`s.
+Again, this checks if the two `Person` objects have the same `Name` or `Phone` attributes.
+```
+SEQUENCE DIAGRAM?
+```
+
+- If all checks pass, `Model#setPerson(Person target, Person editedPerson)` is called to replace the old `Person` with the edited `Person` within the `ObservableList<Person>`, which is encapsulated within the `UniquePersonList` class and serves to ensure uniqueness of all of its `Person` contents.
+```
+  SOME STATE DIAGRAM HERE?
+```
+
+```
+SHOW ACTIVITY DIAGRAM FOR VALIDITY CHECKS
+```
+
+#### Proposed enhancements/changes
+
+Subsequently, the `SupplyItem` class which encapsulates an item in a vendor's inventory will be implemented.
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation

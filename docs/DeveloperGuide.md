@@ -215,7 +215,8 @@ SHOW ACTIVITY DIAGRAM FOR VALIDITY CHECKS
 
 #### Proposed enhancements/changes
 
-Subsequently, the `SupplyItem` class which encapsulates an item in a vendor's inventory will be implemented.
+Subsequently, the `SupplyItem` class which encapsulates an item in a vendor's inventory will be implemented. Each instance of this class contains a reference to a `Person` (i.e. each item in the inventory is supplied by one supplier). 
+As a result, editing a supplier's details necessitate a corresponding update to the `SupplyItem` object that has a reference to the edited `Person`.
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation

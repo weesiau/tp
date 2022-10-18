@@ -195,6 +195,7 @@ to allow the `ArgumentTokenizer` and `ArgumentMultimap` to recognise and split t
 Given below is an example usage scenario and how the edit supplier command behaves at each step.
 
 Step 1. The user launches the application. The `ReadOnlyAddressBook` that holds supplier data in the application is initialised with supplier data stored on the `AddressBookStorage` saved on disk, otherwise it is populated with sample supplier data from `SampleDataUtil`.
+
 <img src="images/PersonStorageDataExistsState.png" width="350" />
 <img src="images/PersonStorageDataNotExistState.png" width="350" />
 
